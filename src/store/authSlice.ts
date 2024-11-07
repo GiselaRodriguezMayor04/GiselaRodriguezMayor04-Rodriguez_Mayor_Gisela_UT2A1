@@ -1,34 +1,32 @@
-import { createSlice } from "@reduxjs/toolkit";
-
-export interface AuthState {
-  Autenticado: boolean;
-  nombreUsuario: string;
-  Rol: string;
-}
-
-const initialAuthState: AuthState = {
-  Autenticado: false,
-  nombreUsuario: '',
-  Rol: ''
-};
-
-const authSlice = createSlice({
+ 
+ import { createSlice } from '@reduxjs/toolkit' 
+ export interface AuthState {
+  isAutenticated: boolean,
+  userName: string,
+  userRol: string
+ }
+ const initialAuthState: AuthState = {
+  isAutenticated: false,
+  userName: '',
+  userRol: ''
+ }
+ 
+ const authSlice = createSlice({
   name: 'authentication',
   initialState: initialAuthState,
   reducers: {
-    login: (state, action) => {
-      const { nombreUsuario, rol } = action.payload;
-      state.Autenticado = true;
-      state.nombreUsuario = nombreUsuario;
-      state.Rol = rol;
-    },
-    logout: (state) => {
-      state.Autenticado = false;
-      state.nombreUsuario = '';
-      state.Rol = '';
-    }
+ 
+ login: (state, action) => {
+  const userData = action.payload
+  state.isAutenticated = true 
+  state.userName = userData.userName 
+  state.userRol = userData.userRol
+  },
+  logout: (state) => {
+  state = initialAuthState
   }
-});
-
-export const authActions = authSlice.actions;
-export default authSlice.reducer;
+  }
+ })
+ export const authActions = authSlice.actions
+ export default authSlice.reducer
+ 

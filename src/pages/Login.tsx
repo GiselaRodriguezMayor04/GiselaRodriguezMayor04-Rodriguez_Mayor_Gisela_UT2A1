@@ -1,78 +1,96 @@
-import { Typography, Button, Card, Box, TextField, IconButton } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
+import { Typography, Container, Button,Paper,Box, TextField,IconButton } from '@mui/material';
+import { useState } from 'react'
+import Grid from '@mui/material/Grid2'
 import LockIcon from '@mui/icons-material/Lock';
 import Alert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
-import { authActions } from '../store/authSlice';
+import CheckIcon from '@mui/icons-material/Check';
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
+import { authActions } from '../store/authSlice';
 
 function Login() {
-  const [data, setData] = useState({ nombre: '', contraseña: '', corresponden: 0 });
+  const [data, setData] = useState({usuario:'', contraseña:'',corresponden:0})
+  const bduser = 'Gisela'
+  const bdpasswd = '1234'
 
-  const bduser = 'Gisela';
-  const bdpasswd = '1234';
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleSubmit = (e:any) => {
-    e.preventDefault();
-
-    if (data.nombre === bduser && data.contraseña === bdpasswd) {
+    e.preventDefault();  
+    if(data.usuario === bduser && data.contraseña === bdpasswd) {
       setData({ ...data, corresponden: 1 });
-      console.log(`Usuario: ${data.nombre}, Contraseña: ${data.contraseña}`);
-      
-      navigate("/Home");
-
-      dispatch(authActions.login({ nombreUsuario: data.nombre, rol: 'administrador' }));
-    } else {
+      console.log("Usuario: "+ data.usuario+ ", Contraseña: "+data.contraseña)
+      navigate("/Home")
+      dispatch(authActions.login( {
+        userName: data.usuario,
+        userRol: 'administrador'
+      }))
+    }else {
       setData({ ...data, corresponden: 2 });
-      console.log(`Usuario: ${data.nombre}, Contraseña: ${data.contraseña}`);
+      console.log("Usuario: "+ data.usuario+ ", Contraseña: "+data.contraseña)
     }
-  };
+  }
 
+  const handleChangeUser = (e:any) =>{
+    setData({
+      ...data,
+      usuario: e.target.value
+    })
+  }
+
+  const handleChangePassword = (e:any) =>{
+    setData({
+      ...data,
+      contraseña: e.target.value
+    })
+  }
   return (
-    <>
-      <Card elevation={3} square sx={{ textAlign: 'center', p: 2 }}>
-        <Typography variant="h5">Sistema de acceso</Typography>
+    <Container sx={{marginTop: "30px"}}>
+      <Paper elevation={3} square={true} sx={{textAlign:'center', padding:"7px"}}>
+        <Typography variant='h5'>Systema de acceso</Typography>
         <IconButton>
-          <LockIcon />
+          <LockIcon/>
         </IconButton>
-      </Card>
-
-      <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
-        <TextField
-          label="Nombre"
-          variant="outlined"
-          value={data.nombre}
-          onChange={(e) => setData({ ...data, nombre: e.target.value })}
-          fullWidth
-          required
-          sx={{ mb: 2 }}
-        />
-
-        <TextField
-          label="Contraseña"
-          variant="outlined"
-          value={data.contraseña}
-          onChange={(e) => setData({ ...data, contraseña: e.target.value })}
-          type="password"
-          fullWidth
-          required
-          sx={{ mb: 2 }}
-        />
-
-        <Button variant="contained" fullWidth type="submit">
-          Acceder
-        </Button>
-
-        {data.corresponden !== 0 && (
-          <Alert severity={data.corresponden === 1 ? "success" : "error"} sx={{ mt: 2 }}>
-            {data.corresponden === 1 ? "Acceso concedido" : "Usuario y/o contraseña incorrecta"}
-          </Alert>
-        )}
-      </Box>
-    </>
+        <Box
+          component = 'form'
+          onSubmit={handleSubmit}
+          >
+          <Grid container spacing={2}>
+            <Grid size={{xs:12, sm:12, md:12}}>
+              <TextField
+                required
+                label = "Usuario"
+                variant='outlined'
+                fullWidth
+                value= {data.usuario}
+                onChange={handleChangeUser}
+              />
+            </Grid>
+            <Grid size={{xs:12, sm:12, md:12}}>
+              <TextField
+                required
+                label = "Contraseña"
+                variant='outlined'
+                fullWidth
+                value= {data.contraseña}
+                type='password'
+                onChange={handleChangePassword}
+              />
+            </Grid>
+          </Grid>
+          <Button sx={{padding:"10px",marginTop:"10px"}} variant='contained' fullWidth type='submit'> Acceder </Button>
+          {data.corresponden !== 0 && (
+            data.corresponden === 1 ? (
+            <Alert severity="success"> Acesso concedido </Alert>
+            ) : (
+            <Alert severity="error"> Usuario y/o contraseña incorrecta </Alert>
+            )
+          )}
+        </Box>
+      </Paper>
+    </Container>
   );
 }
 
