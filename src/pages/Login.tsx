@@ -1,10 +1,8 @@
-import React from 'react';
 import { Typography, Container, Button,Paper,Box, TextField,IconButton } from '@mui/material';
 import { useState } from 'react'
 import Grid from '@mui/material/Grid2'
 import LockIcon from '@mui/icons-material/Lock';
 import Alert from '@mui/material/Alert';
-import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { authActions } from '../store/authSlice';
@@ -18,19 +16,25 @@ function Login() {
   const dispatch = useDispatch()
 
   const handleSubmit = (e:any) => {
-    e.preventDefault();  
-    if(data.usuario === bduser && data.contraseña === bdpasswd) {
-      setData({ ...data, corresponden: 1 });
-      console.log("Usuario: "+ data.usuario+ ", Contraseña: "+data.contraseña)
-      navigate("/Home")
-      dispatch(authActions.login( {
-        userName: data.usuario,
-        userRol: 'administrador'
-      }))
-    }else {
-      setData({ ...data, corresponden: 2 });
-      console.log("Usuario: "+ data.usuario+ ", Contraseña: "+data.contraseña)
-    }
+    e.preventDefault(); 
+    isVerifiedUser()
+     }
+
+     async function isVerifiedUser () {
+      fetch(`http://localhost:3030/login?user=${data.usuario}&password=${data.contraseña}`)
+      .then(response => response.json())
+      .then (response => {
+      console.log('Lo que nos llega de la base de datos: ')
+      console.log(response.data)
+      if (response.data.length !== 0){
+        navigate("/Home")
+        dispatch(authActions.login( {
+          userName: data.usuario,
+          userRol: 'administrador'
+        }))
+      } else{
+      } 
+    })
   }
 
   const handleChangeUser = (e:any) =>{
